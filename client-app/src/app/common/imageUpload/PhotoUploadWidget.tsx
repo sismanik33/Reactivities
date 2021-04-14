@@ -41,7 +41,7 @@ export default function PhotoUploadWidget({loading, uploadPhoto}: Props) {
       </Grid.Column>
       <Grid.Column width={1}/>
       <Grid.Column width={4}>
-        <Header sub color='teal' content='S tep 3 - Preview & upload' />
+        <Header sub color='teal' content='Step 3 - Preview & upload' />
         {files && files.length > 0 &&
           <>
             <div className='img-preview' style={{minHeight: 200, overflow: 'hidden'}} />

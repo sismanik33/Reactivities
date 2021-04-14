@@ -1,19 +1,29 @@
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Core;
 using Application.Interfaces;
+using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
-namespace Application.Photos
+namespace Application.Profiles
 {
-  public class SetMain
+  public class Edit
   {
     public class Command : IRequest<Result<Unit>>
     {
-      public string Id { get; set; }
+      public string DisplayName { get; set; }
+      public string Bio { get; set; }
+
+    }
+
+    public class CommandValidator : AbstractValidator<Command>
+    {
+      public CommandValidator()
+      {
+        RuleFor(x => x.DisplayName).NotEmpty();
+      }
     }
 
     public class Handler : IRequestHandler<Command, Result<Unit>>
@@ -28,26 +38,18 @@ namespace Application.Photos
 
       public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
       {
-        var user = await _context.Users.Include(p => p.Photos)
-            .FirstOrDefaultAsync(x => x.UserName == _userAccessor.GetUserName());
+        //find the User Profile that needs to be edited:
+        var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == _userAccessor.GetUserName());
 
-        if (user == null) return null;
-
-        var photo = user.Photos.FirstOrDefault(x => x.Id == request.Id);
-
-        if (photo == null) return null;
-
-        var currentMain = user.Photos.FirstOrDefault(x => x.IsMain);
-
-        if (currentMain != null) currentMain.IsMain = false;
-
-        photo.IsMain = true;
+        //if fields not null update the user profile
+        user.Bio = request.Bio ?? user.Bio;
+        user.DisplayName = request.DisplayName ?? user.DisplayName;
 
         var success = await _context.SaveChangesAsync() > 0;
 
         if (success) return Result<Unit>.Success(Unit.Value);
 
-        return Result<Unit>.Failure("Problem setting main photo");
+        return Result<Unit>.Failure("Problem updating profile");
       }
     }
   }

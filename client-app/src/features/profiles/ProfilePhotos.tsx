@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite';
-import * as React from 'react';
+import React from 'react';
 import { SyntheticEvent, useState } from 'react';
 import { Card, Header, Tab, Image, Grid, Button } from 'semantic-ui-react';
 import PhotoUploadWidget from '../../app/common/imageUpload/PhotoUploadWidget';
@@ -12,7 +12,7 @@ interface Props {
 
 export default observer(function ProfilePhotos({profile}: Props) {
   const {profileStore: {isCurrentUser, uploadPhoto, uploading, loading, setMainPhoto, deletePhoto}} = useStore();
-  const [addPhotoMode, setAddPhotoMode] = React.useState(false);
+  const [addPhotoMode, setAddPhotoMode] = useState(false);
   const [target, setTarget] = useState('');
 
   function handlePhotoUpload(file: Blob) {
@@ -76,10 +76,7 @@ export default observer(function ProfilePhotos({profile}: Props) {
               </Card.Group>
             )}
         </Grid.Column>
-
       </Grid>
-      
-
     </Tab.Pane>
   )
 })
